@@ -1,3 +1,4 @@
+import os
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup
 from aiogram.dispatcher import FSMContext
@@ -7,8 +8,8 @@ import keyboard as kb
 from send import Form, Hu_Tao,User,NewUser,Chat, NewPhone
 import db
 
-my_secret = "TOKEN"
-bot = Bot(token=my_secret)
+my_secret = os.environ['Cool']
+bot = Bot(token='5596343764:AAFbhfUCWhuruOFAj3BmPIw_a9G1OLLUjVk')
 dp = Dispatcher(bot,storage=MemoryStorage())
 chat_id = -1001626563343
 
@@ -20,7 +21,8 @@ async def start(m: types.Message):
   sqll1 = [x.user_name for x in db.session.query(db.User.user_name).distinct()]
   sqll2 = [x.phone_number for x in db.session.query(db.User.phone_number).distinct()]
   sqll3 = [x.id_chat for x in db.session.query(db.User.id_chat).distinct()]
-  if m.from_user.username in sqll:
+  black = [x.id_users for x in db.session.query(db.Black.id_users).distinct()]
+  if m.from_user.username in sqll and str(m.chat.id) not in black:
     bilder = ReplyKeyboardMarkup(resize_keyboard=True)
     bilder.add(types.KeyboardButton(
           text="Оставить заявку"),
@@ -37,6 +39,8 @@ async def start(m: types.Message):
     user['phone'] = sqll2[index_found]
     user['id_chat'] = sqll3[index_found]
     await m.reply('Добро пожаловать в главное меню чат-бота Управляющей компании "УЭР-ЮГ". Здесь Вы можете оставить заявку для управляющей компании или направить свое предложение по управлению домом.Просто воспользуйтесь кнопками меню, чтобы взаимодействовать с функциями бота:', reply_markup=bilder)
+  elif str(m.chat.id) in black:
+    await m.reply('Вы забанены')
   else:
     bilder = ReplyKeyboardMarkup()
     bilder.add(types.KeyboardButton(
@@ -114,7 +118,7 @@ async def request_1(callback: types.CallbackQuery):
 
   await callback.message.answer('''
   Шаг 1/3 Напишите адрес или орентир проблемы(улицу, номер дома, подъезд, этаж и квартиру):
-  ''')
+  ''', reply_markup=kb.NextOrQute('request2'))
 
   await Form.why.set()
 
@@ -311,25 +315,51 @@ async def good(m: types.Message):
 ######Панель управления######
 @dp.message_handler(commands=['users'])
 async def send_help(message: types.Message):
-  id = [x.id for x in db.session.query(db.User.id).distinct()]
-  phone = [x.phone_number for x in db.session.query(db.User.phone_number).distinct()]
-  
-  name = [x.user_name for x in db.session.query(db.User.user_name).distinct()]
-
-  id_name = [x.user_id for x in db.session.query(db.User.user_id).distinct()]
-  
-  id = [x.id_users for x in db.session.query(db.User.id_users).distinct()]
-  
-  await bot.send_message(-844439269,"\n".join(f'(@{id_name[i]})(id_chat-{id[i]}){name[i]} - {phone[i]}' for i in range(len(id))))
+    if message.chat.id == -844439269:
+        id = [x.id for x in db.session.query(db.User.id).distinct()]
+        phone = [x.phone_number for x in db.session.query(db.User.phone_number).distinct()]
+        
+        name = [x.user_name for x in db.session.query(db.User.user_name).distinct()]
+      
+        id_name = [x.user_id for x in db.session.query(db.User.user_id).distinct()]
+        
+        id = [x.id_users for x in db.session.query(db.User.id_users).distinct()]
+        
+        await bot.send_message(-844439269,"\n".join(f'(@{id_name[i]})(id_chat-{id[i]}){name[i]} - {phone[i]}' for i in range(len(id))))
 
 @dp.message_handler(commands=['send'])
 async def send(m: types.Message):
-  await bot.send_message(m.get_args(),' '.join(m.text.split()[2:]))
+    if m.chat.id == -844439269:
+        await bot.send_message(m.get_args(),' '.join(m.text.split()[2:]))
 
 @dp.message_handler(commands=['help'])
 async def help(m: types.Message):
-  await m.reply(m.chat.id)
+  if m.chat.id == -844439269:
+    await m.reply('/send - ответить пользователю\n/reply - сделать рассылку среди других пользователей\n/ban и /unban - забанить, разбанить пользователя')
 
+@dp.message_handler(commands=['reply'])
+async def replyAll(m: types.Message):
+  if m.chat.id == -844439269:
+    txt = ' '.join(m.text.split()[1:])
+    users = [x.id_chat for x in db.session.query(db.User.id_chat).distinct()]
+    for i in users:
+      await bot.send_message(i,txt)
+
+@dp.message_handler(commands=['ban'])
+async def ban(m: types.Message):
+  if m.chat.id == -844439269:
+   users = db.Black(id_users=m.get_args())
+   db.session.add(users)
+   db.session.commit()
+   db.session.close()
+   await bot.send_message(m.get_args(),'Вас забанили')
+
+@dp.message_handler(commands=['unban'])
+async def ban(m: types.Message):
+  if m.chat.id == -844439269:
+    x = db.session.query(db.Black).filter(db.Black.id_users == m.get_args()).delete()
+    db.session.commit()
+    await bot.send_message(m.get_args(),'Вас разбаненли')
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)

@@ -9,7 +9,7 @@ from send import Form, Hu_Tao,User,NewUser,Chat, NewPhone
 import db
 
 my_secret = os.environ['Cool']
-bot = Bot(token='5596343764:AAFbhfUCWhuruOFAj3BmPIw_a9G1OLLUjVk')
+bot = Bot(token='5591104183:AAGu5ppSRPMYlBsC7kN_8rTG5OJ2E-wUUvY')
 dp = Dispatcher(bot,storage=MemoryStorage())
 chat_id = -1001626563343
 
@@ -171,11 +171,11 @@ async def ohWhat(m: types.Message,state: FSMContext):
   
   async with state.proxy() as data:
     try:
-      await bot.send_photo(-890778244,
+      await bot.send_photo(-834023831,
                           photo=data['okay'],
                           caption=f)
     except:
-      await bot.send_video(-890778244,
+      await bot.send_video(-834023831,
                           video=data['okay'],
                           caption=f)
   await state.finish()
@@ -199,7 +199,7 @@ async def send_what(m: types.Message,state: FSMContext):
   f = f'Поступила новое предложение:\n@{user["id_name"]}\nИмя и Фамилия:{user["name"]}\nНомер телефона:{user["phone"]}\nСодержание:{data["why"]}\n\nЧтобы ответить пользователю напешите команду /send {m.from_user.id}'
   
   async with state.proxy() as data:
-    await bot.send_message(-874918342,f)
+    await bot.send_message(-817291908,f)
   await m.reply('Идея принята и передана администрации. Спасибо за Ваше оброщение!')
   await state.finish()
 ###################################

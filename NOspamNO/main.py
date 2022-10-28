@@ -1,4 +1,3 @@
-import os
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup
 from aiogram.dispatcher import FSMContext
@@ -8,7 +7,7 @@ import keyboard as kb
 from send import Form, Hu_Tao,User,NewUser,Chat, NewPhone
 import db
 
-my_secret = os.environ['Cool']
+my_secret = "TOKEN"
 bot = Bot(token=my_secret)
 dp = Dispatcher(bot,storage=MemoryStorage())
 chat_id = -1001626563343

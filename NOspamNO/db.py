@@ -26,6 +26,19 @@ user = Table(
     Column('id_users', String(100))
 )
 
+black = Table(
+    "black",
+    metadata_obj,
+    Column("id", Integer, primary_key=True),
+    Column('id_users', String(100))
+)
+
+class Black(Base):
+
+  __tablename__ = 'black'
+
+  id = Column(Integer, primary_key=True)
+  id_users = Column(String(100))
 
 class User(Base):
 
@@ -61,3 +74,4 @@ def creates(what):
     return ''
 
 creates(user)
+creates(black)

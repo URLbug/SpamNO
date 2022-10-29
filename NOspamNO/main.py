@@ -118,7 +118,7 @@ async def request_1(callback: types.CallbackQuery):
 
   await callback.message.answer('''
   Шаг 1/3 Напишите адрес или орентир проблемы(улицу, номер дома, подъезд, этаж и квартиру):
-  ''', reply_markup=kb.NextOrQute('request2'))
+  ''')
 
   await Form.why.set()
 

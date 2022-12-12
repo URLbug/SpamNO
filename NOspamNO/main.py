@@ -9,7 +9,7 @@ from send import Form, Hu_Tao,User,NewUser,Chat, NewPhone
 import db
 
 my_secret = os.environ['Cool']
-bot = Bot(token='5591104183:AAGu5ppSRPMYlBsC7kN_8rTG5OJ2E-wUUvY')
+bot = Bot(token='')
 dp = Dispatcher(bot,storage=MemoryStorage())
 chat_id = -1001626563343
 
